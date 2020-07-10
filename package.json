@@ -1,0 +1,44 @@
+{
+  "name": "stuart-frontend-challenge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Stuart frontend challenge.",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --config ./webpack.config.js --mode development",
+    "build": "webpack --config ./webpack.config.js --mode=production",
+    "lint": "eslint --fix ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jalbertsr/stuart-frontend-challenge.git"
+  },
+  "author": "Joan Albert Segura Rueda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jalbertsr/stuart-frontend-challenge/issues"
+  },
+  "homepage": "https://github.com/jalbertsr/stuart-frontend-challenge",
+  "devDependencies": {
+    "@babel/core": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-react": "^7.10.4",
+    "babel-loader": "^8.1.0",
+    "copy-webpack-plugin": "^6.0.3",
+    "eslint": "^7.4.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react-hooks": "^4.0.6",
+    "react-hot-loader": "^4.12.21",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "styled-jsx": "^3.3.0"
+  }
+}
