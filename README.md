@@ -3,7 +3,7 @@
 ## Step 5 - Comments:
 
 - I would add the option of an error toaster in the case the job can't be created.
-- Using Google Maps API I would have drew the route from the Pickup address to the drop off point.
+- Using Google Maps API I would have drew the route from the pickup address to the drop off point.
 - I think the `https://stuart-frontend-challenge.now.sh/geocode` endpoint should be a `GET` not a `POST` since it is used for requesting information, not creating it.
 
 ##### Notes:
@@ -20,6 +20,15 @@ Install all the dependencies.
 ```
 npm install
 ```
+
+Configuration of `.env` file:
+
+You need to create an **.env** file in the project root with the following environment variables configured:  
+You can take as example the `env.example`.    
+
+  ```
+  GOOGLE_MAPS_API_KEY=
+  ```
 
 Run the project:
 
