@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import css from 'styled-jsx/css';
 
 import Badge from './Badge';
-import { checkGeocodeAddress, createJob } from '../services';
+import InputField from './InputField';
+import { createJob } from '../services';
+import handleAddress from '../helpers/handleAddress';
 
 const style = css`
   .searchContainer {
@@ -18,21 +20,6 @@ const style = css`
 
   .label {
     margin-bottom: 16px;
-  }
-
-  input {
-    border-radius: 4px;
-    height: 32px;
-    width: 86%;
-    background-color: #f0f3f7;
-    border: none;
-    padding: 8px;
-    color: #252525;
-    font-size: 16px;
-  }
-
-  input::placeholder {
-    color: #8596a6;
   }
 
   button {
@@ -64,26 +51,8 @@ const SearchBox = ({ usePickUpPosition, useDropOffPosition, useToaster }) => {
     pickUpLocation: { lat: '', lng: '' },
     dropOffLocation: { lat: '', lng: '' },
   };
-  const [infoButton, useInfoButton] = useState({
-    isCreatingJob: false,
-    isDisabled: true,
-  });
   const [deliveryData, useDeliveryData] = useState(mainState);
-  const { pickUpAddress, dropOffAddress } = deliveryData;
-
-  // bonus step
-  // useEffect(() => {
-  //   const timeoutId = setTimeout(async () => {
-  //     const { latitude, longitude } = await checkGeocodeAddress();
-  //     useDeliveryData((prevState) => ({
-  //       ...prevState,
-  //       [pickUpOrDropOff === 'pickUpAddress'
-  //         ? 'pickUpLocation'
-  //         : 'dropOffLocation']: { lat: latitude, lng: longitude },
-  //     }));
-  //   }, 2000);
-  //   return () => clearTimeout(timeoutId);
-  // }, [pickUpAddress, dropOffAddress]);
+  const [isCreatingJob, useInfoButton] = useState(false);
 
   const handleChange = (e) => {
     e.persist();
@@ -97,53 +66,31 @@ const SearchBox = ({ usePickUpPosition, useDropOffPosition, useToaster }) => {
     e.persist();
     const pickUpOrDropOff = e.target.name;
     const address = deliveryData[pickUpOrDropOff];
-    let addressState = 'blank';
-    if (address.length) {
-      try {
-        const { latitude, longitude } = await checkGeocodeAddress(address);
-        useDeliveryData((prevState) => ({
-          ...prevState,
-          [pickUpOrDropOff === 'pickUpAddress'
-            ? 'pickUpLocation'
-            : 'dropOffLocation']: { lat: latitude, lng: longitude },
-        }));
-        addressState = 'present';
-      } catch {
-        addressState = 'error';
-      }
-    }
-    const state = e.target.name === 'pickUpAddress'
-      ? { pickUpState: addressState }
-      : { dropOffState: addressState };
-
-    useDeliveryData((prevState) => ({ ...prevState, ...state }));
-
-    const { pickUpState, dropOffState } = deliveryData;
-    useInfoButton((prevState) => ({
-      ...prevState,
-      isDisabled: !(pickUpState === 'present' || dropOffState === 'present'),
-    }));
+    await handleAddress(address, pickUpOrDropOff, useDeliveryData);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    useInfoButton((prevState) => ({ ...prevState, isCreatingJob: true }));
+    useInfoButton(true);
     try {
+      const { pickUpAddress, dropOffAddress } = deliveryData;
       await createJob({
         pickUp: pickUpAddress,
         dropOff: dropOffAddress,
       });
-      useInfoButton((prevState) => ({ ...prevState, isCreatingJob: false }));
+      useInfoButton(false);
       useToaster(true);
       useDeliveryData(mainState);
     } catch {
-      useInfoButton((prevState) => ({ ...prevState, isCreatingJob: false }));
+      useInfoButton(false);
     }
   };
 
   const {
     pickUpState,
     dropOffState,
+    pickUpAddress,
+    dropOffAddress,
     pickUpLocation,
     dropOffLocation,
   } = deliveryData;
@@ -159,35 +106,35 @@ const SearchBox = ({ usePickUpPosition, useDropOffPosition, useToaster }) => {
     useDropOffPosition(null);
   }
 
-  const { isDisabled, isCreatingJob } = infoButton;
+  const isDisabled = !(pickUpState === 'present' && dropOffState === 'present');
   return (
     <div className="searchContainer">
       <form onSubmit={handleSubmit}>
         <label htmlFor="pickUp">
           <div className="label">
             <Badge isPickUp pickUpState={pickUpState} />
-            <input
+            <InputField
               id="pickUp"
               placeholder="Pick up address"
-              type="text"
               name="pickUpAddress"
-              value={pickUpAddress}
-              onChange={handleChange}
-              onBlur={checkAddress}
+              address={pickUpAddress}
+              handleChange={handleChange}
+              handleBlur={checkAddress}
+              useDeliveryData={useDeliveryData}
             />
           </div>
         </label>
         <label htmlFor="dropOff">
           <div className="label">
             <Badge dropOffState={dropOffState} />
-            <input
+            <InputField
               id="dropOff"
               placeholder="Drop off address"
-              type="text"
               name="dropOffAddress"
-              value={dropOffAddress}
-              onChange={handleChange}
-              onBlur={checkAddress}
+              address={dropOffAddress}
+              handleChange={handleChange}
+              handleBlur={checkAddress}
+              useDeliveryData={useDeliveryData}
             />
           </div>
         </label>
