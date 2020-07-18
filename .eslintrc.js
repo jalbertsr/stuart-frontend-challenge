@@ -11,11 +11,12 @@ module.exports = {
     ecmaVersion: 11,
     sourceType: 'module',
   },
-  plugins: ['react'],
+  plugins: ['react', 'react-hooks'],
   rules: {
     'react/jsx-filename-extension': 0,
     'react/prop-types': 0,
     'operator-linebreak': 0,
     'jsx-a11y/label-has-associated-control': 0,
+    'react-hooks/rules-of-hooks': 'error',
   },
 };

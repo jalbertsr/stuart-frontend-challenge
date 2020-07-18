@@ -22,10 +22,10 @@ const style = css`
   }
 `;
 
-const Toaster = ({ useToaster }) => {
-  const handleClick = () => useToaster(false);
+const Toaster = ({ setToaster }) => {
+  const handleClick = () => setToaster(false);
   setTimeout(() => {
-    useToaster(false);
+    setToaster(false);
   }, 5000);
   return (
     <div

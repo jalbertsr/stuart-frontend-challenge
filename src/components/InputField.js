@@ -26,11 +26,11 @@ const InputField = ({
   handleChange,
   handleBlur,
   address,
-  useDeliveryData,
+  setDeliveryData,
 }) => {
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
-      await handleAddress(address, name, useDeliveryData);
+      await handleAddress(address, name, setDeliveryData);
     }, 2000);
     return () => clearTimeout(timeoutId);
   }, [address]);

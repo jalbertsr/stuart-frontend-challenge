@@ -1,11 +1,11 @@
 import { checkGeocodeAddress } from '../services';
 
-const handleAddress = async (address = '', pickUpOrDropOff, useDeliveryData) => {
+const handleAddress = async (address = '', pickUpOrDropOff, setDeliveryData) => {
   let addressState = 'blank';
   if (address.length) {
     try {
       const { latitude, longitude } = await checkGeocodeAddress(address);
-      useDeliveryData((prevState) => ({
+      setDeliveryData((prevState) => ({
         ...prevState,
         [pickUpOrDropOff === 'pickUpAddress' ? 'pickUpLocation' : 'dropOffLocation']: {
           lat: latitude,
@@ -21,7 +21,7 @@ const handleAddress = async (address = '', pickUpOrDropOff, useDeliveryData) => 
         ? { pickUpState: addressState }
         : { dropOffState: addressState };
 
-    useDeliveryData((prevState) => ({ ...prevState, ...state }));
+    setDeliveryData((prevState) => ({ ...prevState, ...state }));
   }
 };
 
