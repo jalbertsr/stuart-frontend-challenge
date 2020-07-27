@@ -22,17 +22,17 @@ const style = css`
 `;
 
 const App = () => {
-  const [pickUpPosition, usePickUpPosition] = useState();
-  const [dropOffPosition, useDropOffPosition] = useState();
-  const [isJobToaster, useToaster] = useState(false);
+  const [pickUpPosition, setPickUpPosition] = useState();
+  const [dropOffPosition, setDropOffPosition] = useState();
+  const [isJobToaster, setToaster] = useState(false);
 
   return (
     <div className="container">
-      {isJobToaster && <Toaster useToaster={useToaster} />}
+      {isJobToaster && <Toaster setToaster={setToaster} />}
       <SearchBox
-        useToaster={useToaster}
-        usePickUpPosition={usePickUpPosition}
-        useDropOffPosition={useDropOffPosition}
+        setToaster={setToaster}
+        setPickUpPosition={setPickUpPosition}
+        setDropOffPosition={setDropOffPosition}
       />
       <Map
         googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&key=${process.env.GOOGLE_MAPS_API_KEY}`}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import css from 'styled-jsx/css';
 
 import Badge from './Badge';
@@ -42,7 +42,7 @@ const style = css`
   }
 `;
 
-const SearchBox = ({ usePickUpPosition, useDropOffPosition, useToaster }) => {
+const SearchBox = ({ setPickUpPosition, setDropOffPosition, setToaster }) => {
   const mainState = {
     pickUpAddress: '',
     dropOffAddress: '',
@@ -51,40 +51,8 @@ const SearchBox = ({ usePickUpPosition, useDropOffPosition, useToaster }) => {
     pickUpLocation: { lat: '', lng: '' },
     dropOffLocation: { lat: '', lng: '' },
   };
-  const [deliveryData, useDeliveryData] = useState(mainState);
-  const [isCreatingJob, useInfoButton] = useState(false);
-
-  const handleChange = (e) => {
-    e.persist();
-    useDeliveryData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const checkAddress = async (e) => {
-    e.persist();
-    const pickUpOrDropOff = e.target.name;
-    const address = deliveryData[pickUpOrDropOff];
-    await handleAddress(address, pickUpOrDropOff, useDeliveryData);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    useInfoButton(true);
-    try {
-      const { pickUpAddress, dropOffAddress } = deliveryData;
-      await createJob({
-        pickUp: pickUpAddress,
-        dropOff: dropOffAddress,
-      });
-      useInfoButton(false);
-      useToaster(true);
-      useDeliveryData(mainState);
-    } catch {
-      useInfoButton(false);
-    }
-  };
+  const [deliveryData, setDeliveryData] = useState(mainState);
+  const [isCreatingJob, setInfoButton] = useState(false);
 
   const {
     pickUpState,
@@ -95,16 +63,49 @@ const SearchBox = ({ usePickUpPosition, useDropOffPosition, useToaster }) => {
     dropOffLocation,
   } = deliveryData;
 
-  if (pickUpState === 'present') {
-    usePickUpPosition(pickUpLocation);
-  } else {
-    usePickUpPosition(null);
-  }
-  if (dropOffState === 'present') {
-    useDropOffPosition(dropOffLocation);
-  } else {
-    useDropOffPosition(null);
-  }
+  useEffect(() => {
+    if (pickUpState === 'present') {
+      setPickUpPosition(pickUpLocation);
+    } else {
+      setPickUpPosition(null);
+    }
+    if (dropOffState === 'present') {
+      setDropOffPosition(dropOffLocation);
+    } else {
+      setDropOffPosition(null);
+    }
+  }, [pickUpState, dropOffState]);
+
+  const handleChange = (e) => {
+    e.persist();
+    setDeliveryData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const checkAddress = async (e) => {
+    e.persist();
+    const pickUpOrDropOff = e.target.name;
+    const address = deliveryData[pickUpOrDropOff];
+    await handleAddress(address, pickUpOrDropOff, setDeliveryData);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setInfoButton(true);
+    try {
+      await createJob({
+        pickUp: pickUpAddress,
+        dropOff: dropOffAddress,
+      });
+      setInfoButton(false);
+      setToaster(true);
+      setDeliveryData(mainState);
+    } catch {
+      setInfoButton(false);
+    }
+  };
 
   const isDisabled = !(pickUpState === 'present' && dropOffState === 'present');
   return (
@@ -120,7 +121,7 @@ const SearchBox = ({ usePickUpPosition, useDropOffPosition, useToaster }) => {
               address={pickUpAddress}
               handleChange={handleChange}
               handleBlur={checkAddress}
-              useDeliveryData={useDeliveryData}
+              setDeliveryData={setDeliveryData}
             />
           </div>
         </label>
@@ -134,7 +135,7 @@ const SearchBox = ({ usePickUpPosition, useDropOffPosition, useToaster }) => {
               address={dropOffAddress}
               handleChange={handleChange}
               handleBlur={checkAddress}
-              useDeliveryData={useDeliveryData}
+              setDeliveryData={setDeliveryData}
             />
           </div>
         </label>
